@@ -1,70 +1,69 @@
-"""Ejercicio 7"""
+# Ejercicio 7
+def reduceLen(cadena):
+    # Reduce la longitud de una cadena removiendo iterativamente pares de caracteres repetidos.
+    i = 0
+    while i < len(cadena):
+        if cadena[i+1] == cadena[i]:
+            cadena = cadena[0:i] + cadena[(i+2):]
+        i = i + 1
+    return cadena
 
-def reduceLen(String):
-	#Reduce la longitud de una cadena removiendo iterativamente pares de caracteres repetidos.
-	i=0
-	while i<len(String) :
-		if String[i+1]==String[i]:
-			String=String[0:i]+String[(i+2):]
-		i=i+1
-	return String
+# Ejercicio 8
+def isContained(cadena, subcadena):
+    # Determina si los caracteres de una cadena se encuentran contenidos y en el mismo orden dentro de otra cadena.
+    cont = 0
+    for char in cadena:
+        if cont == len(subcadena):
+            return True
+        if char == subcadena[cont]:
+            cont += 1
+    else:
+        return False
 
-"""Ejercicio 8"""
-
-def isContained(String,St_pat):
-	#Determina si los caracteres de una cadena se encuentran contenidos y en el mismo orden dentro de otra cadena.
-	cont=0
-	for each in String:
-		if cont==len(St_pat): return True
-		if each is St_pat[cont]:
-			cont+=1
-	else: return False
-
-"""Ejercicio 13"""
-
-def Rhash(P):
-    #calcula el hash con potencia de 128
-    num=0
-    Pow=len(P)-1
-    for i in range(0,len(P)):
-        num=num+(128**Pow)*ord(P[i])
-        Pow=Pow-1
+# Ejercicio 13
+def Rhash(palabra):
+    # Calcula el hash con potencia de 128
+    num = 0
+    pow = len(palabra) - 1
+    for i in range(0, len(palabra)):
+        num = num + (128 ** pow) * ord(palabra[i])
+        pow = pow - 1
     return num
-    
-def rabin_karp(S,P):
-    #algoritmo de Rabin-Karp
-    m=len(P)
-    n=len(S)
-    hash_p=Rhash(P) #hash del patt
-    for i in range(0,n-m+1): #O(n-m)
-        t_s=S[i:i+m] #O(1)
-        if Rhash(t_s)==hash_p and t_s==P: 
-            print(P,"Found at ",i)
 
-def KMP(T,P):
-    #Implementa el algoritmo KMP
-    pr=Compute_Prefix_Function(P)
-    ocurrencias=[]
-    q=0 #caracteres macheados
-    for i in range(len(T)):
-        while q>0 and P[q] != T[i]:
-            q=pr[q-1] # no coincide entoces retroce
-        if P[q]==T[i]:
-            q=q+1 #el caracter coincide
-        if q==len(P): #verifica que esta todo el patron visto
-            ocurrencias.append(i-len(P)+1)
-            print("Pattern occurs with shift",i-len(P)+1)
-            q=pr[q-1] #seguimos viendo
+def rabin_karp(texto, patron):
+    # Algoritmo de Rabin-Karp
+    m = len(patron)
+    n = len(texto)
+    hash_patron = obtener_hash(patron)
+    for i in range(0, n - m + 1):
+        t_s = texto[i:i+m]
+        if obtener_hash(t_s) == hash_patron and t_s == patron:
+            print(patron, "encontrado en la posición", i)
+
+def KMP(texto, patron):
+    # Implementa el algoritmo KMP
+    prefijos = calcular_funcion_prefijo(patron)
+    ocurrencias = []
+    q = 0  # caracteres macheados
+    for i in range(len(texto)):
+        while q > 0 and patron[q] != texto[i]:
+            q = prefijos[q-1]  # no coincide, retrocede
+        if patron[q] == texto[i]:
+            q = q + 1  # el caracter coincide
+        if q == len(patron):  # verifica que todo el patrón ha sido visto
+            ocurrencias.append(i - len(patron) + 1)
+            print("El patrón ocurre con desplazamiento", i - len(patron) + 1)
+            q = prefijos[q-1]  # seguimos buscando
     return ocurrencias
 
-def Compute_Prefix_Function(P):
-    #ve los mayores prefijos de p que son a la vez sufijos de Pq
-    pi=[0]*(len(P))
-    k=0
-    for q in range(1,len(P)):
-        while k>0 and P[k] != P[q]: #Este bucle busca el mayor prefijo válido anterior al sufijo actual P[q]
-            k=pi[k]
-        if P[k] is P[q]: #extendemos el prefijo valido
-            k+=1
-        pi[q]=k #almacena el valor de la función de prefijo calculado hasta ese punto
+def Compute_Prefix_Function(patron):
+    # Calcula los mayores prefijos de P que son a la vez sufijos de Pq
+    pi = [0] * len(patron)
+    k = 0
+    for q in range(1, len(patron)):
+        while k > 0 and patron[k] != patron[q]:
+            k = pi[k]
+        if patron[k] == patron[q]:
+            k += 1
+        pi[q] = k
     return pi
